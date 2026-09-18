@@ -1,0 +1,33 @@
+{
+  "hoursWindow": 48,
+  "topClusters": 7,
+  "minJaccard": 0.3,
+  "telegram": { "botToken": "", "chatId": "" },
+  "tgChannels": [
+    "seeallochnaya", "ai_newz", "MLunderhood", "addmeto", "opendatascience",
+    "not_boring_ds", "neurohive", "habr_ai", "pro_ai_official", "denissexy",
+    "gonzo_ML", "data_secrets", "abitconnected", "neuralshit", "botfatherdev",
+    "habr_com", "tproger", "vcru", "proglib", "d_code"
+  ],
+  "redditSubs": [
+    "LocalLLaMA", "MachineLearning", "ClaudeAI", "OpenAI", "AI_Agents",
+    "cursor", "ChatGPTCoding", "programming", "webdev"
+  ],
+  "feeds": [
+    { "name": "Habr",        "url": "https://habr.com/ru/rss/news/?fl=ru" },
+    { "name": "vc.ru",       "url": "https://vc.ru/rss" },
+    { "name": "Tproger",     "url": "https://tproger.ru/feed/" },
+    { "name": "Opennet",     "url": "https://www.opennet.ru/opennews/opennews_all.rss" },
+    { "name": "3DNews",      "url": "https://3dnews.ru/news/rss/" },
+    { "name": "CNews",       "url": "https://www.cnews.ru/inc/rss/news.xml" },
+    { "name": "Lenta",       "url": "https://lenta.ru/rss/news" },
+    { "name": "HackerNews",  "url": "https://hnrss.org/frontpage" },
+    { "name": "Techmeme",    "url": "https://www.techmeme.com/feed.xml" },
+    { "name": "ArsTech",     "url": "https://feeds.arstechnica.com/arstechnica/index" },
+    { "name": "MIT TR",      "url": "https://www.technologyreview.com/feed/" },
+    { "name": "ArXiv cs.AI", "url": "https://rss.arxiv.org/rss/cs.AI" },
+    { "name": "SimonWillison","url": "https://simonwillison.net/atom/everything/" },
+    { "name": "LatentSpace", "url": "https://www.latent.space/feed" },
+    { "name": "HuggingFace", "url": "https://huggingface.co/blog/feed.xml" }
+  ]
+}
