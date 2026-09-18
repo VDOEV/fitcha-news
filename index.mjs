@@ -173,3 +173,17 @@ if (botToken && chatId) {
   }
   console.log('✓ Отправлено в Telegram');
 } else console.log('ℹ Токен не задан — дайджест в digest.md и консоль (env TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID или sources.json)');
+
+const maxToken = process.env.MAX_BOT_TOKEN || CFG.max?.accessToken;
+const maxChat = process.env.MAX_CHAT_ID || CFG.max?.chatId;
+if (maxToken && maxChat) {
+  for (let i = 0; i < text.length; i += 3500) {
+    const res = await fetch('https://platform-api2.max.ru/messages', {
+      method: 'POST',
+      headers: { 'Authorization': maxToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text.slice(i, i + 3500), recipient: { chat_id: Number(maxChat) } })
+    });
+    if (!res.ok) console.error('MAX send error:', res.status, (await res.text()).slice(0, 200));
+  }
+  console.log('✓ Отправлено в MAX');
+} else console.log('ℹ MAX-токен не задан — отправка в MAX пропущена (env MAX_BOT_TOKEN / MAX_CHAT_ID или sources.json → max)');
