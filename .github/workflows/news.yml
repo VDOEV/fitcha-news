@@ -1,26 +1,58 @@
 name: news-digest
 on:
   schedule:
-    - cron: '30 5 * * 3,5,0' # Ср/Пт/Вс 08:30 МСК
+    # Ср/Пт/Вс, попытки в 08:00, 09:00 и 10:00 МСК (05:00-07:00 UTC).
+    # GitHub задерживает запуски по крону — первая попытка, которая реально
+    # выполнится, шлёт дайджест; остальные в этот же день пропускаются по метке.
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   digest:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
+      - name: Guard — не отправлять дважды в день
+        id: guard
+        if: github.event_name == 'schedule'
+        run: |
+          TODAY=$(TZ=Europe/Moscow date +%F)
+          if [ -f last-digest.txt ] && [ "$(cat last-digest.txt)" = "$TODAY" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Дайджест за $TODAY уже отправлен — пропуск попытки"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Метка за сегодня не найдена — отправляем"
+          fi
+
       - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip != 'true'
         with:
           node-version: '22'
-      - run: node index.mjs
+
+      - name: Собрать и отправить дайджест
+        if: steps.guard.outputs.skip != 'true'
+        run: node index.mjs
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           MAX_BOT_TOKEN: ${{ secrets.MAX_BOT_TOKEN }}
           MAX_CHAT_ID: ${{ secrets.MAX_CHAT_ID }}
+
+      - name: Поставить метку отправки
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          TZ=Europe/Moscow date +%F > last-digest.txt
+          git config user.name "digest-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add last-digest.txt
+          git diff --cached --quiet || git commit -m "digest sent $(cat last-digest.txt)"
+          git push
+
       - uses: actions/upload-artifact@v4
+        if: steps.guard.outputs.skip != 'true'
         with:
           name: digest
           path: digest.md
