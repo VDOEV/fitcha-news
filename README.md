@@ -1,34 +1,75 @@
-# Парсер новостей → TG-бот
+# Fitcha News — новостной конвейер канала «Это Фича»
 
-Собирает свежие новости из 9 источников (RU + EN), находит пересечения (о чём пишут несколько
-источников сразу = топ), шлёт дайджест в Telegram-бота и сохраняет в digest.md.
+Собирает свежие новости из Telegram-каналов, Reddit и RSS, находит пересечения
+(о чём пишут многие источники сразу), скорит популярность и шлёт дайджест в Telegram-бот.
+Полностью облачно, бесплатно, без зависимостей (чистый Node.js).
 
-## Подключить бота (5 минут)
-1. В TG у @BotFather: /newbot → имя → username. Получишь токен вида `123456:AAH...`
-2. Узнай свой chat_id у @userinfobot
-3. Впиши оба в `sources.json` → блок `"telegram"`
-4. Первое сообщение боту: открой бота в TG и нажми Start (иначе Telegram не даст ему писать)
+## Как это работает (пайплайн)
 
-## Запуск
 ```
-node index.mjs
+[20 TG-каналов]  [9 Reddit-сабов]  [15 RSS-лент]
+        └────────────┬──────────────┘
+              сбор свежего (окно 48ч)
+                     ↓
+      кластеризация заголовков (Jaccard ≥ 0.3)
+        «одна новость у многих источников»
+                     ↓
+      скоринг: пересечения × 60 + популярность (просмотры/апвоуты, до 50)
+               + свежесть (до 20)
+                     ↓
+      дайджест: 🔥 главная + 📋 топ-7 + 📄 одиночные
+                     ↓
+        Telegram Bot API → личка владельца
+        (+ MAX Bot API — зарезервировано, включается секретами)
 ```
-или двойной клик по `run.cmd`
 
-## Автозапуск по расписанию (Windows, раз в 4 часа)
-Выполни один раз в консоли:
+## Расписание
+
+- GitHub Actions: cron `0 0 * * 3,5,0` (Ср/Пт/Вс 03:00 МСК). Планировщик GitHub
+  задерживает запуски на ~4–5 ч — факт-отправка получается 07:00–08:00 МСК,
+  до утреннего контент-слота 9:30.
+- Метка `last-digest.txt` (дата МСК) гарантирует одну отправку в день:
+  повторные попытки дня пропускаются.
+- Ручной запуск: вкладка Actions → news-digest → Run workflow
+  (или `gh workflow run news.yml -R VDOEV/fitcha-news`).
+
+## Источники (sources.json)
+
+- **Telegram (превью t.me/s/)**: @seeallochnaya, @ai_newz, @MLunderhood, @addmeto,
+  @opendatascience, @not_boring_ds, @neurohive, @habr_ai, @pro_ai_official,
+  @denissexy, @gonzo_ML, @data_secrets, @abitconnected, @neuralshit, @botfatherdev,
+  @habr_com, @tproger, @vcru, @proglib, @d_code — из превью берутся тексты и просмотры.
+- **Reddit (JSON API, топ дня)**: r/LocalLLaMA, r/MachineLearning, r/ClaudeAI,
+  r/OpenAI, r/AI_Agents, r/cursor, r/ChatGPTCoding, r/programming, r/webdev — апвоуты.
+- **RSS**: Хабр, vc.ru, Tproger, Opennet, 3DNews, CNews, Lenta, HackerNews,
+  Techmeme, ArsTechnica, MIT Tech Review, arXiv cs.AI, Simon Willison,
+  Latent Space, Hugging Face.
+
+## Секреты (Settings → Secrets → Actions)
+
+| Секрет | Назначение |
+|---|---|
+| `TELEGRAM_BOT_TOKEN` | токен бота, который присылает дайджест |
+| `TELEGRAM_CHAT_ID` | чат-получатель |
+| `MAX_BOT_TOKEN` | опционально: токен бота MAX (дублирует дайджест) |
+| `MAX_CHAT_ID` | опционально: chat_id MAX (узнать: `node get-max-chat-id.mjs <TOKEN>`) |
+
+## Локальный запуск (не обязательно)
+
 ```
-schtasks /Create /TN "NewsParser" /SC HOURLY /MO 4 /TR "D:\VibeAi\zai\news-parser\run.cmd"
+node index.mjs            # дайджест в консоль + digest.md
 ```
-Удалить: `schtasks /Delete /TN "NewsParser" /F`
 
-## Настройка
-- `sources.json → sources` — список RSS-источников (добавляй/убирай свободно)
-- `hoursWindow` — окно свежести в часах
-- `topClusters` — сколько новостей в дайджесте
-- `minJaccard` — порог похожести заголовков (0.25–0.35; меньше = шире кластеры)
+## Настройки (sources.json)
 
-## Что дальше (по желанию)
-- ИИ-рерайт под твой стиль: вписать вызов LLM API перед отправкой (нужен API-ключ)
-- Отправка в MAX-бота: добавить второй sender, когда оформишь бота в MAX
-- Кнопки «постить / в корзину»: слать не в личку, а в чат с ботом и апрувить перед публикацией в канал
+- `hoursWindow` — окно свежести, часов (48)
+- `topClusters` — сколько позиций в дайджесте (7)
+- `minJaccard` — порог схожести заголовков (0.3; меньше — шире кластеры)
+
+## Известные ограничения
+
+- X/Twitter не парсится (платный API) — контент исследователей приходит
+  через TG-каналы, HN и Reddit.
+- GitHub-планировщик задерживает крон (см. выше) — компенсировано ранним кроном.
+- Реакции/комментарии TG в превью не видны — популярность считается по просмотрам.
+- ИИ-рерайта нет (сознательно: дайджест сырой, текст пишет автор).
