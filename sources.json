@@ -28,6 +28,20 @@
     { "name": "ArXiv cs.AI", "url": "https://rss.arxiv.org/rss/cs.AI" },
     { "name": "SimonWillison","url": "https://simonwillison.net/atom/everything/" },
     { "name": "LatentSpace", "url": "https://www.latent.space/feed" },
-    { "name": "HuggingFace", "url": "https://huggingface.co/blog/feed.xml" }
+    { "name": "HuggingFace", "url": "https://huggingface.co/blog/feed.xml" },
+    { "name": "Verge",       "url": "https://www.theverge.com/rss/index.xml" },
+    { "name": "TechCrunch",  "url": "https://techcrunch.com/feed/" },
+    { "name": "Ben's Bites", "url": "https://bensbites.com/feed" },
+    { "name": "Rundown AI",  "url": "https://www.therundown.ai/feed" },
+    { "name": "Import AI",   "url": "https://importai.net/feed/" },
+    { "name": "Eugene Yan",  "url": "https://eugeneyan.com/rss/" },
+    { "name": "Lilian Weng", "url": "https://lilianweng.github.io/index.xml" },
+    { "name": "Jay Alammar", "url": "https://jalammar.github.io/feed.xml" },
+    { "name": "Interconnects","url": "https://www.interconnects.ai/feed" },
+    { "name": "One Useful",  "url": "https://www.oneusefulthing.org/feed" },
+    { "name": "OpenAI",      "url": "https://openai.com/news/rss.xml" },
+    { "name": "DeepMind",    "url": "https://deepmind.google/blog/rss.xml" },
+    { "name": "Aider",       "url": "https://aider.chat/feed.xml" },
+    { "name": "Vercel",      "url": "https://vercel.com/feeds/rss" }
   ]
 }
