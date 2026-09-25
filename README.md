@@ -41,9 +41,17 @@
   @habr_com, @tproger, @vcru, @proglib, @d_code — из превью берутся тексты и просмотры.
 - **Reddit (JSON API, топ дня)**: r/LocalLLaMA, r/MachineLearning, r/ClaudeAI,
   r/OpenAI, r/AI_Agents, r/cursor, r/ChatGPTCoding, r/programming, r/webdev — апвоуты.
-- **RSS**: Хабр, vc.ru, Tproger, Opennet, 3DNews, CNews, Lenta, HackerNews,
-  Techmeme, ArsTechnica, MIT Tech Review, arXiv cs.AI, Simon Willison,
-  Latent Space, Hugging Face.
+- **RSS (29 лент)**: Хабр, vc.ru, Tproger, Opennet, 3DNews, CNews, Lenta, HackerNews,
+  Techmeme, ArsTechnica, MIT Tech Review, arXiv cs.AI, Simon Willison, Latent Space,
+  Hugging Face, The Verge, TechCrunch, Ben's Bites, The Rundown AI, Import AI,
+  Eugene Yan, Lilian Weng, Jay Alammar, Interconnects, One Useful Thing, OpenAI News,
+  DeepMind Blog, Aider, Vercel.
+
+## Не парсится (нет RSS/платный API)
+
+- X/Twitter-аккаунты (исследователи и компании) — контент приходит через TG, HN, Reddit
+- tldrai.com, deeplearning.ai/the-batch, anthropic.com/news, cursor.com/blog, vibecoding.ru/news — RSS нет
+- paperswithcode, lmarena.ai, epoch.ai, artificialanalysis — базы/бенчмарки, не новостные ленты
 
 ## Секреты (Settings → Secrets → Actions)
 
